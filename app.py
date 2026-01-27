@@ -233,11 +233,11 @@ from pathlib import Path
 from agno.db.in_memory import InMemoryDb
 
 # ======================= Directories =========================
-dir_path = Path('./research_paper/')
-dir_path.mkdir(exist_ok=True)
+research_dir = Path("./research_paper/")
+research_dir.mkdir(exist_ok=True)
 
-target_dir_path = Path('./medium_articals/')
-target_dir_path.mkdir(exist_ok=True)
+medium_dir = Path("./medium_articals/")
+medium_dir.mkdir(exist_ok=True)
 
 # ======================== DB ================================
 db = InMemoryDb()
@@ -264,7 +264,7 @@ arxiv_research_agent = Agent(
         "Use the available tools to search for research papers, authors and topics as per user's request",
         "Summarize your findings clearly and concisely"
     ],
-    tools=[ArxivTools(download_dir=dir_path)],
+    tools=[ArxivTools(download_dir=research_dir)],
     add_datetime_to_context=True
 )
 
@@ -368,22 +368,11 @@ medium_article_team = Team(
     add_datetime_to_context=True,
     add_history_to_context=True,
     num_history_runs=10,
-    tools=[LocalFileSystemTools(target_directory=target_dir_path, default_extension='md')],
+    tools=[LocalFileSystemTools(target_directory=medium_dir, default_extension='md')],
     stream=True,
     markdown=True
 )
 
-from pathlib import Path
-
-# ======================= CMD Interface =====================
-from pathlib import Path
-
-# Folders
-# research_dir = Path("./research_paper/")
-# research_dir.mkdir(exist_ok=True)
-
-# medium_dir = Path("./medium_articals/")
-# medium_dir.mkdir(exist_ok=True)
 
 # ======================= CMD Interface =====================
 if __name__ == "__main__":
@@ -399,35 +388,38 @@ if __name__ == "__main__":
 
         print("\n⏳ Running research agents... Please wait...\n")
 
-        # Run all research agents individually
-        # Run all research agents individually
+        # Run research agents and save raw content
         for agent in [
             newspaper_agent,
             web_search_agent
         ]:
-            # Run the agent and get RunOutput
-            run_output = agent.run(user_prompt)
-            
-            # run_output.content contains the generated text
-            research_text = run_output.content or ""
+            try:
+                run_output = agent.run(user_prompt)
+                research_text = run_output.content or ""
+            except Exception as e:
+                print(f"⚠️ {agent.name} failed: {e}")
+                research_text = ""
 
-            # Save research content to file
+            # Save raw research content
             agent_filename = f"{agent.id}_{user_prompt.replace(' ', '_')[:50]}.txt"
-            filepath = dir_path / agent_filename
+            filepath = research_dir / agent_filename
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(research_text)
 
             print(f"💾 Research saved: {filepath.name}")
 
+        print("\n⏳ Research complete. Generating final Medium-style article...\n")
 
-
-        
         # ======================== Medium Article ========================
         response_text = ""
-        for event in medium_article_team.run(user_prompt):
-            if hasattr(event, "content") and event.content:
-                print(event.content, end="", flush=True)
-                response_text += event.content
+        try:
+            for event in medium_article_team.run(user_prompt):
+                if hasattr(event, "content") and event.content:
+                    print(event.content, end="", flush=True)
+                    response_text += event.content
+        except Exception as e:
+            print(f"⚠️ Medium article generation failed: {e}")
+            continue
 
         print("\n\n✅ Article generation completed.")
 
@@ -437,12 +429,11 @@ if __name__ == "__main__":
             if filename == "":
                 filename = user_prompt.replace(" ", "_")[:50]
 
-            # Save final article
-            filepath = target_dir_path / f"{filename}.md"
+            # Save final article ONLY in medium_articals
+            filepath = medium_dir / f"{filename}.md"
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(response_text)
 
             print(f"💾 Article saved to {filepath.resolve()}")
 
         print("\n---------------------------------\n")
-
