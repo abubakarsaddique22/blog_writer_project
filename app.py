@@ -376,6 +376,16 @@ medium_article_team = Team(
 from pathlib import Path
 
 # ======================= CMD Interface =====================
+from pathlib import Path
+
+# Folders
+# research_dir = Path("./research_paper/")
+# research_dir.mkdir(exist_ok=True)
+
+# medium_dir = Path("./medium_articals/")
+# medium_dir.mkdir(exist_ok=True)
+
+# ======================= CMD Interface =====================
 if __name__ == "__main__":
     print("🧠 Medium Article Generator (CMD Mode)")
     print("Type 'exit' to quit\n")
@@ -387,27 +397,47 @@ if __name__ == "__main__":
             print("👋 Exiting...")
             break
 
-        print("\n⏳ Processing... Please wait...\n")
+        print("\n⏳ Running research agents... Please wait...\n")
 
+        # Run all research agents individually
+        # Run all research agents individually
+        for agent in [
+            newspaper_agent,
+            web_search_agent
+        ]:
+            # Run the agent and get RunOutput
+            run_output = agent.run(user_prompt)
+            
+            # run_output.content contains the generated text
+            research_text = run_output.content or ""
+
+            # Save research content to file
+            agent_filename = f"{agent.id}_{user_prompt.replace(' ', '_')[:50]}.txt"
+            filepath = dir_path / agent_filename
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(research_text)
+
+            print(f"💾 Research saved: {filepath.name}")
+
+
+
+        
+        # ======================== Medium Article ========================
         response_text = ""
-
-        # Run the team in normal (synchronous) mode
         for event in medium_article_team.run(user_prompt):
-            # Each event is a RunContentEvent object
             if hasattr(event, "content") and event.content:
                 print(event.content, end="", flush=True)
                 response_text += event.content
 
-        print("\n\n✅ Article process completed.")
+        print("\n\n✅ Article generation completed.")
 
         save_confirm = input("\nDo you want to save this article? (y/n): ").strip().lower()
         if save_confirm == "y":
             filename = input("Enter filename (without extension) or leave blank for auto-generated: ").strip()
             if filename == "":
-                filename = user_prompt.replace(" ", "_")[:50]  # auto-generate
+                filename = user_prompt.replace(" ", "_")[:50]
 
-            # Save manually using Python
-            target_dir_path.mkdir(exist_ok=True)
+            # Save final article
             filepath = target_dir_path / f"{filename}.md"
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(response_text)
@@ -415,3 +445,4 @@ if __name__ == "__main__":
             print(f"💾 Article saved to {filepath.resolve()}")
 
         print("\n---------------------------------\n")
+
