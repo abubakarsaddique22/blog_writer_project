@@ -375,6 +375,16 @@ medium_article_team = Team(
 
 
 # ======================= CMD Interface =====================
+from pathlib import Path
+
+# Directories
+research_dir = Path("./research_paper/")
+research_dir.mkdir(exist_ok=True)
+
+medium_dir = Path("./medium_articals/")
+medium_dir.mkdir(exist_ok=True)
+
+# ======================= CMD Interface =====================
 if __name__ == "__main__":
     print("🧠 Medium Article Generator (CMD Mode)")
     print("Type 'exit' to quit\n")
@@ -391,7 +401,7 @@ if __name__ == "__main__":
         # Run research agents and save raw content
         for agent in [
             newspaper_agent,
-            # web_search_agent
+            web_search_agent
         ]:
             try:
                 run_output = agent.run(user_prompt)
@@ -400,7 +410,7 @@ if __name__ == "__main__":
                 print(f"⚠️ {agent.name} failed: {e}")
                 research_text = ""
 
-            # Save raw research content
+            # Save raw research content only in research_paper
             agent_filename = f"{agent.id}_{user_prompt.replace(' ', '_')[:50]}.txt"
             filepath = research_dir / agent_filename
             with open(filepath, "w", encoding="utf-8") as f:
@@ -411,12 +421,20 @@ if __name__ == "__main__":
         print("\n⏳ Research complete. Generating final Medium-style article...\n")
 
         # ======================== Medium Article ========================
-        response_text = ""
+        # Prepare prompt for Medium article generator
+        # Feed it only a summary: don't include tables/links
+        article_prompt = f"""
+Using the research files in '{research_dir.resolve()}', 
+write a clear, well-structured Medium-style article about: {user_prompt}. 
+Do NOT include raw tables, links, or PDF text. Only narrative suitable for blog.
+"""
+
+        blog_text = ""  # Only final blog content
         try:
-            for event in medium_article_team.run(user_prompt):
+            for event in medium_article_team.run(article_prompt):
                 if hasattr(event, "content") and event.content:
                     print(event.content, end="", flush=True)
-                    response_text += event.content
+                    blog_text += event.content
         except Exception as e:
             print(f"⚠️ Medium article generation failed: {e}")
             continue
@@ -432,7 +450,7 @@ if __name__ == "__main__":
             # Save final article ONLY in medium_articals
             filepath = medium_dir / f"{filename}.md"
             with open(filepath, "w", encoding="utf-8") as f:
-                f.write(response_text)
+                f.write(blog_text)  # <-- only final blog content
 
             print(f"💾 Article saved to {filepath.resolve()}")
 
