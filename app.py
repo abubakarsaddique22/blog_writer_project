@@ -347,7 +347,7 @@ medium_article_team = Team(
     role='Team Leader which manages research and content creation',
     db=db,
     members=[
-        # arxiv_research_agent,
+        arxiv_research_agent,
         # hackernews_agent,
         # wikipedia_agent,
         # youtube_agent,
@@ -373,17 +373,6 @@ medium_article_team = Team(
     markdown=True
 )
 
-
-# ======================= CMD Interface =====================
-from pathlib import Path
-
-# Directories
-research_dir = Path("./research_paper/")
-research_dir.mkdir(exist_ok=True)
-
-medium_dir = Path("./medium_articals/")
-medium_dir.mkdir(exist_ok=True)
-
 # ======================= CMD Interface =====================
 if __name__ == "__main__":
     print("🧠 Medium Article Generator (CMD Mode)")
@@ -400,8 +389,8 @@ if __name__ == "__main__":
 
         # Run research agents and save raw content
         for agent in [
+            arxiv_research_agent,
             newspaper_agent,
-            web_search_agent
         ]:
             try:
                 run_output = agent.run(user_prompt)
