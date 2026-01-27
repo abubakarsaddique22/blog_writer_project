@@ -14,13 +14,11 @@
 
 # # define the dir to save the research paper 
 
-# dir_path = Path('./research_paper/')
-# dir_path.mkdir(exist_ok=True)
+# research_dir = Path("./research_paper/")
+# research_dir.mkdir(exist_ok=True)
 
-# # define the dir to save the artical final output 
-
-# target_dir_path = Path('./medium_articals/')
-# target_dir_path.mkdir(exist_ok=True)
+# medium_dir = Path("./medium_articals/")
+# medium_dir.mkdir(exist_ok=True)
 
 # # define db 
 
@@ -384,6 +382,15 @@ from pathlib import Path
 # medium_dir = Path("./medium_articals/")
 # medium_dir.mkdir(exist_ok=True)
 
+from pathlib import Path
+
+# Directories
+research_dir = Path("./research_paper/")
+research_dir.mkdir(exist_ok=True)
+
+medium_dir = Path("./medium_articals/")
+medium_dir.mkdir(exist_ok=True)
+
 # ======================= CMD Interface =====================
 if __name__ == "__main__":
     print("🧠 Medium Article Generator (CMD Mode)")
@@ -421,12 +428,20 @@ if __name__ == "__main__":
         print("\n⏳ Research complete. Generating final Medium-style article...\n")
 
         # ======================== Medium Article ========================
-        blog_text = ""  # <-- separate variable for final blog only
+        # Prepare prompt for Medium article generator
+        # Feed it only a summary: don't include tables/links
+        article_prompt = f"""
+Using the research files in '{research_dir.resolve()}', 
+write a clear, well-structured Medium-style article about: {user_prompt}. 
+Do NOT include raw tables, links, or PDF text. Only narrative suitable for blog.
+"""
+
+        blog_text = ""  # Only final blog content
         try:
-            for event in medium_article_team.run(user_prompt):
+            for event in medium_article_team.run(article_prompt):
                 if hasattr(event, "content") and event.content:
                     print(event.content, end="", flush=True)
-                    blog_text += event.content  # only collect final blog content
+                    blog_text += event.content
         except Exception as e:
             print(f"⚠️ Medium article generation failed: {e}")
             continue
