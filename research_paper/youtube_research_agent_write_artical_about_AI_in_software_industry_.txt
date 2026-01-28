@@ -1,0 +1,8 @@
+I’m ready to craft a detailed article on AI in the software industry, but I’ll need a few YouTube videos to draw the most relevant insights, examples, and data points. Could you please share the URLs of any specific videos you’d like me to analyze (or a short list of topics you’re interested in), and I’ll:
+
+1. Pull the video captions and timestamps.  
+2. Summarize the key points, examples, and expert commentary.  
+3. Organize the information into concise notes with timestamps for easy reference.  
+4. Use those notes to write a well‑structured article on AI’s impact on software development, testing, project management, and related areas.  
+
+If you don’t have particular videos in mind, let me know the sub‑topics you want covered (e.g., AI‑assisted coding, automated testing, AI‑driven DevOps, code generation models, ethical considerations, etc.), and I can suggest a few recent, high‑quality videos for you to pick from.
