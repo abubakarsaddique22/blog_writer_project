@@ -1,7 +1,7 @@
 # 🧠 Medium Article Generator (Local LLM, Multi‑Agent System)
 
 A **fully local, multi‑agent research & article generation system** built using **Agno Framework** and **Ollama**.  
-This project allows you to type **one topic in CMD**, automatically research it from multiple sources, and generate a **long‑form, Medium‑style article (1500–2500 words)** — **without using any external APIs**.
+This project allows you to type **one topic in CMD**, automatically research it from multiple sources, and generate a **long‑form, Medium‑style article (1500–2500 words)**  **without using any external APIs**.
 
 > ✅ **No OpenAI / paid APIs**  
 > ✅ **100% Local LLMs via Ollama**  
@@ -17,7 +17,7 @@ This project allows you to type **one topic in CMD**, automatically research it 
 - **Automatic Research Saving** (raw notes per source)
 - **Professional Medium‑Style Blog Generation**
 - **Markdown (.md) Output** ready for publishing
-- **Command‑Line Interface (CMD)** — simple & fast
+- **Command‑Line Interface (CMD)**  simple & fast
 - **In‑Memory Database** for session context
 
 ---
@@ -48,7 +48,7 @@ Medium‑Style Article (.md)
 
 | Component | Technology |
 |--------|-----------|
-| Language | Python 3.10+ |
+| Language | Python 3.13 |
 | Framework | Agno |
 | LLM Runtime | Ollama (Local) |
 | Database | InMemoryDB |
